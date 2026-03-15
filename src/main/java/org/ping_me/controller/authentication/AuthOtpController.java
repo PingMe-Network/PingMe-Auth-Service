@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * @created : 18/01/2026, Sunday
  **/
 @RestController
-@RequestMapping("/otp")
+@RequestMapping("/auth-service/otp")
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AuthOtpController {

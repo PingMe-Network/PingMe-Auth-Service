@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "Các API đăng nhập, làm mới dùng cho thiết bị di động."
 )
 @RestController
-@RequestMapping("/auth/mobile")
+@RequestMapping("/auth-service/auth/mobile")
 @RequiredArgsConstructor
 public class MobileAuthenticationController {
 

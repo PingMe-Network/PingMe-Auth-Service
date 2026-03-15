@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
         description = "Admin quản lý người dùng hệ thống"
 )
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth-service/users")
 @RequiredArgsConstructor
 public class UserManagementController {
 

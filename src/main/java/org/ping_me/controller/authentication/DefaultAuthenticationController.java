@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
         description = "Các API đăng ký, đăng nhập, xác thực phiên và quản lý tài khoản người dùng"
 )
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth-service/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DefaultAuthenticationController {

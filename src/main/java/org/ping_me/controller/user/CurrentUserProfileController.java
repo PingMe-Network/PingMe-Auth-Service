@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
         description = "Các endpoints liên quan tùy chỉnh hồ sơ chính người dùng"
 )
 @RestController
-@RequestMapping("/users/me")
+@RequestMapping("/auth-service/users/me")
 @RequiredArgsConstructor
 public class CurrentUserProfileController {
 

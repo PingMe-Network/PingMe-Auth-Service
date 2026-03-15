@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 
 @RestController
-@RequestMapping("/auth/admin")
+@RequestMapping("/auth-service/auth/admin")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AdminWebAuthenticationController {

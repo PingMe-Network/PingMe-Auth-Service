@@ -22,7 +22,7 @@ import java.util.List;
         description = "Các endpoints liên quan đến phiên làm việc chính người dùng"
 )
 @RestController
-@RequestMapping("/users/me/sessions")
+@RequestMapping("/auth-service/users/me/sessions")
 @RequiredArgsConstructor
 public class CurrentUserSessionController {
 
