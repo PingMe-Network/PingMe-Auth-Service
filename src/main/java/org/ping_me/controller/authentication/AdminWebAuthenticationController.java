@@ -8,6 +8,9 @@ import org.ping_me.dto.base.ApiResponse;
 import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.response.authentication.AdminLoginResponse;
 import org.ping_me.service.authentication.AuthenticationService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +30,18 @@ public class AdminWebAuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    ApiResponse<AdminLoginResponse> login(@Valid @RequestBody DefaultLoginRequest request) {
-        return new ApiResponse<>(authenticationService.adminLogin(request));
+    ResponseEntity<ApiResponse<AdminLoginResponse>> login(@Valid @RequestBody DefaultLoginRequest request) {
+        var authResultWrapper = authenticationService.adminLogin(request);
+        var payload = AdminLoginResponse.builder()
+                .accessToken(authResultWrapper.getAccessToken())
+                .email(authResultWrapper.getUserSession().getEmail())
+                .isAdminAccount(true)
+                .userSession(authResultWrapper.getUserSession())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, authResultWrapper.getRefreshTokenCookie().toString())
+                .body(new ApiResponse<>(payload));
     }
 }

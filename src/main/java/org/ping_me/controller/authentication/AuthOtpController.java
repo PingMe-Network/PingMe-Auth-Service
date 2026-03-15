@@ -57,6 +57,17 @@ public class AuthOtpController {
                 .build();
     }
 
+    @PostMapping("/admin/send")
+    ApiResponse<GetOtpResponse> sendAdminOtp() {
+        GetOtpResponse res = otpService.sendAdminOtp();
+        HttpStatus httpStatus = res.getIsSent() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ApiResponse.<GetOtpResponse>builder()
+                .errorCode(httpStatus.value())
+                .errorMessage(httpStatus.name())
+                .data(res)
+                .build();
+    }
+
     @PostMapping("/verify")
     ApiResponse<OtpVerificationResponse> verifyOtp(@RequestBody OtpVerificationRequest request) {
         return ApiResponse.<OtpVerificationResponse>builder()

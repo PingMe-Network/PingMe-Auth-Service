@@ -12,7 +12,6 @@ import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.request.authentication.MobileLoginRequest;
 import org.ping_me.dto.request.authentication.RegisterRequest;
 import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
-import org.ping_me.dto.response.authentication.AdminLoginResponse;
 import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
@@ -173,7 +172,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AdminLoginResponse adminLogin(DefaultLoginRequest defaultLoginRequest) {
+    public AuthResultWrapper adminLogin(DefaultLoginRequest defaultLoginRequest) {
         String email = defaultLoginRequest.getEmail();
         User user = userRepository.findByEmail(email);
 
@@ -185,14 +184,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user.getRole() == null || !user.getRole().getName().equals("ADMIN"))
             throw new AccessDeniedException("Người dùng không có quyền truy cập");
 
-        String accessToken = jwtService.buildJwt(user, 600L);
-
-        return AdminLoginResponse.builder()
-                .accessToken(accessToken)
-                .email(user.getEmail())
-                .isAdminAccount(true)
-                .userSession(userMapper.mapToCurrentUserSessionResponse(user))
-                .build();
+        return buildAuthResultWrapper(user, defaultLoginRequest.getSubmitSessionMetaRequest(), 600L);
     }
 
     // =====================================
@@ -212,10 +204,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             User user,
             SubmitSessionMetaRequest submitSessionMetaRequest
     ) {
+        return buildAuthResultWrapper(user, submitSessionMetaRequest, accessTokenExpiration);
+    }
+
+    private AuthResultWrapper buildAuthResultWrapper(
+            User user,
+            SubmitSessionMetaRequest submitSessionMetaRequest,
+            Long accessTokenTtl
+    ) {
         // ================================================
         // CREATE TOKEN
         // ================================================
-        var accessToken = jwtService.buildJwt(user, accessTokenExpiration);
+        var accessToken = jwtService.buildJwt(user, accessTokenTtl);
         var refreshToken = jwtService.buildJwt(user, refreshTokenExpiration);
 
         // ================================================

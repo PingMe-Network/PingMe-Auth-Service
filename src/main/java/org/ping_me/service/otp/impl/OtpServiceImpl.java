@@ -20,6 +20,7 @@ import org.ping_me.service.otp.OtpRedisService;
 import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.OtpGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -80,6 +81,17 @@ public class OtpServiceImpl implements OtpService {
                 .mailRecipient(email)
                 .isSent(true)
                 .build();
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public GetOtpResponse sendAdminOtp() {
+        User currentUser = currentUserProvider.get();
+
+        return sendOtp(AuthOtpRequest.builder()
+                .email(currentUser.getEmail())
+                .authOtpType(AuthOtpType.ADMIN_VERIFICATION)
+                .build());
     }
 
     @Override
