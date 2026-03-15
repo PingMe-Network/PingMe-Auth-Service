@@ -1,7 +1,7 @@
 package org.ping_me.client;
 
+import org.ping_me.client.config.MailFeignConfig;
 import org.ping_me.client.dto.TurnstileResponse;
-import org.ping_me.config.feign.MailFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

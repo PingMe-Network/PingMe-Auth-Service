@@ -35,8 +35,7 @@ public class AuthConfiguration {
     private String jwtKey;
 
     public static final MacAlgorithm MAC_ALGORITHM = MacAlgorithm.HS512;
-
-
+    
     @Bean
     public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));

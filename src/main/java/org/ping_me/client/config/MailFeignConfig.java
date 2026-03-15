@@ -1,4 +1,4 @@
-package org.ping_me.config.feign;
+package org.ping_me.client.config;
 
 import feign.RequestInterceptor;
 import lombok.AccessLevel;

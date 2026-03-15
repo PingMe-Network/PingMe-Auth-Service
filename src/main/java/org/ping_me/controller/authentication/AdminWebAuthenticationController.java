@@ -1,4 +1,4 @@
-package org.ping_me.controller;
+package org.ping_me.controller.authentication;
 
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

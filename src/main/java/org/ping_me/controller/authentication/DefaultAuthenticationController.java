@@ -1,4 +1,4 @@
-package org.ping_me.controller;
+package org.ping_me.controller.authentication;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

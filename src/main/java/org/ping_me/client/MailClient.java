@@ -1,6 +1,6 @@
 package org.ping_me.client;
 
-import org.ping_me.config.feign.MailFeignConfig;
+import org.ping_me.client.config.MailFeignConfig;
 import org.ping_me.dto.base.ApiResponse;
 import org.ping_me.dto.request.mail.SendOtpRequest;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,5 +20,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MailClient {
 
     @PostMapping("/mail-management/api/v1/mails/admin-otp-verification")
-    ApiResponse<Boolean> sendOtpToAdmin(@RequestBody SendOtpRequest request);
+    ApiResponse<Boolean> requestSendOtp(@RequestBody SendOtpRequest request);
 }

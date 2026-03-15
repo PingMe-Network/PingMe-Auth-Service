@@ -2,7 +2,7 @@ package org.ping_me.dto.request.mail;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.ping_me.model.constant.OtpType;
+import org.ping_me.model.constant.AuthOtpType;
 
 /**
  * @author : user664dntp
@@ -15,8 +15,8 @@ import org.ping_me.model.constant.OtpType;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class GetOtpRequest {
+public class AuthOtpRequest {
     String email;
-    OtpType otpType;
+    AuthOtpType authOtpType;
     String turnstileToken;
 }

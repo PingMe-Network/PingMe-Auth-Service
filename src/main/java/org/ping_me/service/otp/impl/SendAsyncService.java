@@ -1,4 +1,4 @@
-package org.ping_me.service.mail.impl;
+package org.ping_me.service.otp.impl;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +19,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class MailAsyncService {
+public class SendAsyncService {
+
     MailClient mailClient;
 
     @Async
     public void sendOtpAsync(SendOtpRequest request) {
         try {
             log.info("Starting async OTP request to: {}", request.getToMail());
-            mailClient.sendOtpToAdmin(request);
+            mailClient.requestSendOtp(request);
             log.info("OTP request sent successfully");
         } catch (Exception e) {
             log.error("Error while sending async OTP email: {}", e.getMessage());

@@ -1,4 +1,4 @@
-package org.ping_me.service.mail;
+package org.ping_me.service.otp;
 
 import java.util.concurrent.TimeUnit;
 
@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
  * @mailto : phatdang19052004@gmail.com
  * @created : 15/01/2026, Thursday
  **/
-public interface RedisService {
+public interface OtpRedisService {
     void set(String key, String value, long timeout, TimeUnit timeUnit);
 
     String get(String key);

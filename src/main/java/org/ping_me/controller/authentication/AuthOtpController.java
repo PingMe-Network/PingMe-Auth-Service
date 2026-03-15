@@ -1,4 +1,4 @@
-package org.ping_me.controller;
+package org.ping_me.controller.authentication;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -6,11 +6,11 @@ import lombok.experimental.NonFinal;
 import org.ping_me.client.TurnstileClient;
 import org.ping_me.client.dto.TurnstileResponse;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.request.mail.GetOtpRequest;
+import org.ping_me.dto.request.mail.AuthOtpRequest;
 import org.ping_me.dto.request.mail.OtpVerificationRequest;
 import org.ping_me.dto.response.mail.GetOtpResponse;
 import org.ping_me.dto.response.mail.OtpVerificationResponse;
-import org.ping_me.service.mail.OtpService;
+import org.ping_me.service.otp.OtpService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/otp")
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class OtpController {
+public class AuthOtpController {
 
     OtpService otpService;
 
@@ -45,7 +45,7 @@ public class OtpController {
     }
 
     @PostMapping("/send")
-    ApiResponse<GetOtpResponse> sendOtp(@RequestBody GetOtpRequest request) {
+    ApiResponse<GetOtpResponse> sendOtp(@RequestBody AuthOtpRequest request) {
         validateTurnstile(request.getTurnstileToken());
 
         GetOtpResponse res = otpService.sendOtp(request);

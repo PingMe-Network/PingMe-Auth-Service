@@ -1,4 +1,4 @@
-package org.ping_me.service.mail.impl;
+package org.ping_me.service.otp.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
@@ -6,17 +6,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.ping_me.config.auth.JwtBuilder;
-import org.ping_me.dto.request.mail.GetOtpRequest;
+import org.ping_me.dto.request.mail.AuthOtpRequest;
 import org.ping_me.dto.request.mail.OtpVerificationRequest;
 import org.ping_me.dto.request.mail.SendOtpRequest;
 import org.ping_me.dto.response.mail.GetOtpResponse;
 import org.ping_me.dto.response.mail.OtpVerificationResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
-import org.ping_me.model.constant.OtpType;
+import org.ping_me.model.constant.AuthOtpType;
 import org.ping_me.repository.jpa.UserRepository;
-import org.ping_me.service.mail.OtpService;
-import org.ping_me.service.mail.RedisService;
+import org.ping_me.service.otp.OtpService;
+import org.ping_me.service.otp.OtpRedisService;
 import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.OtpGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +31,10 @@ import java.util.concurrent.TimeUnit;
 public class OtpServiceImpl implements OtpService {
 
     // Service
-    RedisService redisService;
+    OtpRedisService otpRedisService;
     JwtBuilder jwtService;
 
-    MailAsyncService mailAsyncService;
+    SendAsyncService sendAsyncService;
 
     // Repository
     UserRepository userRepository;
@@ -54,24 +54,24 @@ public class OtpServiceImpl implements OtpService {
     String defaultOtp;
 
     @Override
-    public GetOtpResponse sendOtp(GetOtpRequest request) {
+    public GetOtpResponse sendOtp(AuthOtpRequest request) {
         String email = request.getEmail();
         String otp = OtpGenerator.generateOtp(6);
 
         User user = userRepository.findByEmail(email);
         if (user == null) throw new EntityNotFoundException("User not found with email: " + email);
 
-        if (request.getOtpType() != OtpType.ACCOUNT_ACTIVATION &&
+        if (request.getAuthOtpType() != AuthOtpType.ACCOUNT_ACTIVATION &&
                 user.getAccountStatus() == AccountStatus.NON_ACTIVATED)
             throw new IllegalArgumentException("Please active your email to do this action: " + email);
 
-        redisService.set(OTP_PREFIX + email, otp, timeout, TimeUnit.MINUTES);
+        otpRedisService.set(OTP_PREFIX + email, otp, timeout, TimeUnit.MINUTES);
 
-        mailAsyncService.sendOtpAsync(
+        sendAsyncService.sendOtpAsync(
                 SendOtpRequest.builder()
                         .toMail(email)
                         .otp(otp)
-                        .otpType(request.getOtpType())
+                        .authOtpType(request.getAuthOtpType())
                         .build()
         );
 
@@ -88,12 +88,12 @@ public class OtpServiceImpl implements OtpService {
         if (request.getOtp().equalsIgnoreCase(defaultOtp))
             return OtpVerificationResponse.builder()
                     .isValid(true)
-                    .resetPasswordToken(executePostVerificationLogic(request.getMailRecipient(), request.getOtpType())
+                    .resetPasswordToken(executePostVerificationLogic(request.getMailRecipient(), request.getAuthOtpType())
                             .orElse(null))
                     .build();
 
         String email = request.getMailRecipient();
-        String storedOtp = redisService.get(OTP_PREFIX + email);
+        String storedOtp = otpRedisService.get(OTP_PREFIX + email);
 
         if (storedOtp == null)
             throw new IllegalArgumentException("OTP has expired or does not exist.");
@@ -102,10 +102,10 @@ public class OtpServiceImpl implements OtpService {
             return OtpVerificationResponse.builder().isValid(false).build();
 
         // Xóa OTP ngay sau khi xác thực đúng (Tránh brute force)
-        redisService.delete(OTP_PREFIX + email);
+        otpRedisService.delete(OTP_PREFIX + email);
 
         // Thực hiện các logic nghiệp vụ sau xác thực (Lưu trạng thái admin, tạo token...)
-        String resetToken = executePostVerificationLogic(email, request.getOtpType())
+        String resetToken = executePostVerificationLogic(email, request.getAuthOtpType())
                 .orElse(null);
 
         return OtpVerificationResponse.builder()
@@ -117,17 +117,17 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public boolean checkAdminIsVerified() {
         User currentUser = currentUserProvider.get();
-        String storedVerifiedProof = redisService.get(ADMIN_VERIFIED_PREFIX + currentUser.getEmail());
+        String storedVerifiedProof = otpRedisService.get(ADMIN_VERIFIED_PREFIX + currentUser.getEmail());
         return storedVerifiedProof != null;
     }
 
     // ========================================================================
     // UTILS
     // ========================================================================
-    private Optional<String> executePostVerificationLogic(String email, OtpType type) {
+    private Optional<String> executePostVerificationLogic(String email, AuthOtpType type) {
         return switch (type) {
             case ADMIN_VERIFICATION -> {
-                redisService.set(ADMIN_VERIFIED_PREFIX + email, "VERIFIED", 24, TimeUnit.HOURS);
+                otpRedisService.set(ADMIN_VERIFIED_PREFIX + email, "VERIFIED", 24, TimeUnit.HOURS);
                 yield Optional.empty();
             }
 

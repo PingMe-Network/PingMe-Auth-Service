@@ -8,7 +8,7 @@ import lombok.Getter;
  * @created : 22/01/2026, Thursday
  **/
 @Getter
-public enum OtpType {
+public enum AuthOtpType {
     ADMIN_VERIFICATION,
     USER_FORGET_PASSWORD,
     ACCOUNT_ACTIVATION
