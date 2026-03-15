@@ -17,10 +17,8 @@ import org.ping_me.model.constant.AuthOtpType;
 import org.ping_me.repository.jpa.UserRepository;
 import org.ping_me.service.otp.OtpService;
 import org.ping_me.service.otp.OtpRedisService;
-import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.OtpGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -40,12 +38,7 @@ public class OtpServiceImpl implements OtpService {
     // Repository
     UserRepository userRepository;
 
-    // Provider
-    CurrentUserProvider currentUserProvider;
-
     static String OTP_PREFIX = "OTP:";
-    static String ADMIN_VERIFIED_PREFIX = "VERIFIED_ADMIN:";
-
     @NonFinal
     @Value("${spring.mail.timeout}")
     long timeout;
@@ -84,17 +77,6 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public GetOtpResponse sendAdminOtp() {
-        User currentUser = currentUserProvider.get();
-
-        return sendOtp(AuthOtpRequest.builder()
-                .email(currentUser.getEmail())
-                .authOtpType(AuthOtpType.ADMIN_VERIFICATION)
-                .build());
-    }
-
-    @Override
     public OtpVerificationResponse verifyOtp(OtpVerificationRequest request) {
         // default otp for testing purpose
         if (request.getOtp().equalsIgnoreCase(defaultOtp))
@@ -126,23 +108,11 @@ public class OtpServiceImpl implements OtpService {
                 .build();
     }
 
-    @Override
-    public boolean checkAdminIsVerified() {
-        User currentUser = currentUserProvider.get();
-        String storedVerifiedProof = otpRedisService.get(ADMIN_VERIFIED_PREFIX + currentUser.getEmail());
-        return storedVerifiedProof != null;
-    }
-
     // ========================================================================
     // UTILS
     // ========================================================================
     private Optional<String> executePostVerificationLogic(String email, AuthOtpType type) {
         return switch (type) {
-            case ADMIN_VERIFICATION -> {
-                otpRedisService.set(ADMIN_VERIFIED_PREFIX + email, "VERIFIED", 24, TimeUnit.HOURS);
-                yield Optional.empty();
-            }
-
             case USER_FORGET_PASSWORD -> {
                 User user = userRepository.findByEmail(email);
                 if (user == null) throw new EntityNotFoundException("User not found: " + email);

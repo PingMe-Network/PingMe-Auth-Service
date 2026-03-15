@@ -35,31 +35,11 @@ public class AuthOtpController {
     @NonFinal
     String secretKey;
 
-    @GetMapping("/admin/status")
-    ApiResponse<Boolean> isAdminVerified() {
-        return ApiResponse.<Boolean>builder()
-                .errorCode(HttpStatus.OK.value())
-                .errorMessage(HttpStatus.OK.name())
-                .data(otpService.checkAdminIsVerified())
-                .build();
-    }
-
     @PostMapping("/send")
     ApiResponse<GetOtpResponse> sendOtp(@RequestBody AuthOtpRequest request) {
         validateTurnstile(request.getTurnstileToken());
 
         GetOtpResponse res = otpService.sendOtp(request);
-        HttpStatus httpStatus = res.getIsSent() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ApiResponse.<GetOtpResponse>builder()
-                .errorCode(httpStatus.value())
-                .errorMessage(httpStatus.name())
-                .data(res)
-                .build();
-    }
-
-    @PostMapping("/admin/send")
-    ApiResponse<GetOtpResponse> sendAdminOtp() {
-        GetOtpResponse res = otpService.sendAdminOtp();
         HttpStatus httpStatus = res.getIsSent() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ApiResponse.<GetOtpResponse>builder()
                 .errorCode(httpStatus.value())

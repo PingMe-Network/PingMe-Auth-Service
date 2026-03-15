@@ -9,7 +9,6 @@ import lombok.Getter;
  **/
 @Getter
 public enum AuthOtpType {
-    ADMIN_VERIFICATION,
     USER_FORGET_PASSWORD,
     ACCOUNT_ACTIVATION
 }

@@ -13,9 +13,5 @@ import org.ping_me.dto.response.mail.OtpVerificationResponse;
 public interface OtpService {
     GetOtpResponse sendOtp(AuthOtpRequest request);
 
-    GetOtpResponse sendAdminOtp();
-
     OtpVerificationResponse verifyOtp(OtpVerificationRequest request);
-
-    boolean checkAdminIsVerified();
 }
