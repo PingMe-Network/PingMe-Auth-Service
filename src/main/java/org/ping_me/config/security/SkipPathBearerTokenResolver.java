@@ -18,8 +18,16 @@ public class SkipPathBearerTokenResolver implements BearerTokenResolver {
 
     BearerTokenResolver delegate = new DefaultBearerTokenResolver();
     static final List<String> SKIP_PATHS = List.of(
-            "/auth/logout",
-            "/auth/register"
+            "/auth-service/auth/login",
+            "/auth-service/auth/mobile/login",
+            "/auth-service/auth/admin/login",
+            "/auth-service/auth/logout",
+            "/auth-service/auth/register",
+            "/auth-service/auth/refresh",
+            "/auth-service/auth/mobile/refresh",
+            "/auth-service/auth/forget-password",
+            "/auth-service/otp/send",
+            "/auth-service/otp/verify"
     );
 
     @Override

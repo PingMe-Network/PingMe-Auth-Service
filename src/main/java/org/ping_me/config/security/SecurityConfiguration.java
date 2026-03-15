@@ -21,21 +21,22 @@ public class SecurityConfiguration {
 
     private static final String[] WHITELIST = {
             // Authentication
-            "/auth/login",
-            "/auth/mobile/login",
-            "/auth/logout",
-            "/auth/register",
-            "/auth/refresh",
-            "/auth/admin/login",
+            "/auth-service/auth/login",
+            "/auth-service/auth/mobile/login",
+            "/auth-service/auth/logout",
+            "/auth-service/auth/register",
+            "/auth-service/auth/refresh",
+            "/auth-service/auth/admin/login",
+            "/auth-service/auth/mobile/refresh",
 
             // Forget password
-            "/auth/forget-password",
+            "/auth-service/auth/forget-password",
             "/mail-management/api/v1/mails/send-otp",
             "/mail-management/api/v1/mails/otp-verification",
 
             // OTP
-            "/otp/send",
-            "/otp/verify",
+            "/auth-service/otp/send",
+            "/auth-service/otp/verify",
 
             // API DOCS
             "/swagger-ui/**",
