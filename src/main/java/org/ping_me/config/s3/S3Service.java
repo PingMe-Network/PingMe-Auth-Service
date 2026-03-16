@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
@@ -65,40 +64,6 @@ public class S3Service {
     ) {
         String key = String.format("%s/%s", folder, fileName);
         return uploadFile(file, key, getUrl, maxFileSize);
-    }
-
-    /**
-     * Xóa tệp bằng Key (Dùng cho logic nội bộ)
-     */
-    public void deleteFileByKey(String key) {
-        try {
-            if (key == null || key.isBlank()) {
-                throw new S3UploadException("Key không hợp lệ", HttpStatus.NOT_FOUND);
-            }
-
-            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                    .bucket(awsBucketName)
-                    .key(key)
-                    .build();
-
-            s3Client.deleteObject(deleteRequest);
-        } catch (Exception e) {
-            throw new S3UploadException("Lỗi khi xóa tệp trên S3", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Xóa tệp bằng URL hoàn chỉnh (Tự động bóc tách Key từ Domain)
-     */
-    public void deleteFileByUrl(String url) {
-        String base = domain + "/";
-
-        if (!url.startsWith(base)) {
-            throw new S3UploadException("URL không thuộc hệ thống lưu trữ hiện tại", HttpStatus.BAD_REQUEST);
-        }
-
-        String key = url.substring(base.length());
-        deleteFileByKey(key);
     }
 
     private void validateFile(MultipartFile file, long maxFileSize) {

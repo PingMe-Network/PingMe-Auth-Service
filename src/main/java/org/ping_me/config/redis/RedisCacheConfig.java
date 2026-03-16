@@ -56,13 +56,8 @@ public class RedisCacheConfig {
     // =====================================================================
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory factory, RedisCacheConfiguration baseCfg) {
-        Map<String, RedisCacheConfiguration> configs = new HashMap<>();
-
-        configs.put("role_permissions", baseCfg.entryTtl(Duration.ofHours(2)));
-
         return RedisCacheManager.builder(factory)
                 .cacheDefaults(baseCfg)
-                .withInitialCacheConfigurations(configs)
                 .transactionAware()
                 .build();
     }
