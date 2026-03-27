@@ -12,6 +12,7 @@ import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.request.authentication.MobileLoginRequest;
 import org.ping_me.dto.request.authentication.RegisterRequest;
 import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.authentication.CheckEmailResponse;
 import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
@@ -185,6 +186,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AccessDeniedException("Người dùng không có quyền truy cập");
 
         return buildAuthResultWrapper(user, defaultLoginRequest.getSubmitSessionMetaRequest(), 600L);
+    }
+
+    @Override
+    public CheckEmailResponse checkEmail(String email) {
+        return new CheckEmailResponse(userRepository.existsByEmail(email));
     }
 
     // =====================================

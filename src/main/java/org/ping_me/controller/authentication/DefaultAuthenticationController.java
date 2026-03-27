@@ -11,6 +11,7 @@ import org.ping_me.dto.base.ApiResponse;
 import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.request.authentication.RegisterRequest;
 import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.authentication.CheckEmailResponse;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
 import org.ping_me.dto.response.authentication.CreateNewPasswordResponse;
 import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
@@ -51,6 +52,20 @@ public class DefaultAuthenticationController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(authenticationService.register(registerRequest)));
+    }
+
+    @Operation(
+            summary = "Kiểm tra email đã tồn tại",
+            description = "Kiểm tra nhanh email đã được đăng ký hay chưa"
+    )
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<CheckEmailResponse>> checkEmail(
+            @Parameter(description = "Email cần kiểm tra", required = true)
+            @RequestParam("email") String email
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>(authenticationService.checkEmail(email)));
     }
 
     // ================= LOGIN =================
