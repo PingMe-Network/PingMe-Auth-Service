@@ -4,6 +4,7 @@ import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.request.authentication.MobileLoginRequest;
 import org.ping_me.dto.request.authentication.RegisterRequest;
 import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.authentication.CheckEmailResponse;
 import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 import org.ping_me.service.authentication.model.AuthResultWrapper;
 import org.springframework.http.ResponseCookie;
@@ -24,4 +25,6 @@ public interface AuthenticationService {
     AuthResultWrapper refreshSession(String refreshToken, SubmitSessionMetaRequest submitSessionMetaRequest);
 
     AuthResultWrapper adminLogin(DefaultLoginRequest defaultLoginRequest);
+
+    CheckEmailResponse checkEmail(String email);
 }
