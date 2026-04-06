@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth-service/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DefaultAuthenticationController {
+public class WebAuthenticationController {
 
     AuthenticationService authenticationService;
     CurrentUserProfileService currentUserProfileService;
@@ -116,8 +116,9 @@ public class DefaultAuthenticationController {
                 .body(new ApiResponse<>(payload));
     }
 
-    @PostMapping("/forget-password")
-    ApiResponse<CreateNewPasswordResponse> forgetPassword(
+    // ================= RESET PASSWORD =================
+    @PostMapping("/reset-password")
+    ApiResponse<CreateNewPasswordResponse> resetPassword(
             @RequestBody @Valid CreateNewPasswordRequest request
     ) {
         return ApiResponse.<CreateNewPasswordResponse>builder()
