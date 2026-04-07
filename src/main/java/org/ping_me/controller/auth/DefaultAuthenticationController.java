@@ -11,6 +11,7 @@ import org.ping_me.dto.base.ApiResponse;
 import org.ping_me.dto.request.auth.DefaultLoginRequest;
 import org.ping_me.dto.request.auth.RegisterRequest;
 import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CheckEmailResponse;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
 import org.ping_me.dto.response.auth.CreateNewPasswordResponse;
 import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
@@ -117,6 +118,20 @@ public class DefaultAuthenticationController {
                 .status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, authResultWrapper.getRefreshTokenCookie().toString())
                 .body(new ApiResponse<>(payload));
+    }
+
+    @Operation(
+            summary = "Kiểm tra email",
+            description = "Kiểm tra email đã tồn tại trong hệ thống hay chưa"
+    )
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<CheckEmailResponse>> checkEmail(
+            @Parameter(description = "Email cần kiểm tra", required = true)
+            @RequestParam String email
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>(authenticationService.checkEmail(email)));
     }
 
     @PostMapping("/forget-password")

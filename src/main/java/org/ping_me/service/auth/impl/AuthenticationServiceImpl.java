@@ -192,7 +192,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public CheckEmailResponse checkEmail(String email) {
-        return null;
+        return new CheckEmailResponse(userRepository.existsByEmail(email));
     }
 
     // =====================================
