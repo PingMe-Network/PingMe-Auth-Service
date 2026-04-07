@@ -1,4 +1,4 @@
-package org.ping_me.controller.authentication;
+package org.ping_me.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.request.authentication.MobileLoginRequest;
-import org.ping_me.dto.request.authentication.RefreshMobileRequest;
-import org.ping_me.dto.response.authentication.auth.MobileAuthResponse;
-import org.ping_me.service.authentication.AuthenticationService;
+import org.ping_me.dto.request.auth.MobileLoginRequest;
+import org.ping_me.dto.request.auth.RefreshMobileRequest;
+import org.ping_me.dto.request.auth.RegisterRequest;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.MobileAuthResponse;
+import org.ping_me.service.auth.AuthenticationService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class MobileAuthenticationController {
 
     private final AuthenticationService authenticationService;
+
+    // ================= REGISTER =================
+    @Operation(
+            summary = "Đăng ký tài khoản",
+            description = "Đăng ký tài khoản người dùng mới bằng email và mật khẩu"
+    )
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<CurrentUserSessionResponse>> registerLocal(
+            @Parameter(description = "Thông tin đăng ký tài khoản", required = true)
+            @RequestBody @Valid RegisterRequest registerRequest
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(authenticationService.register(registerRequest)));
+    }
 
     @Operation(
             summary = "Đăng nhập qua thiết bị di động",

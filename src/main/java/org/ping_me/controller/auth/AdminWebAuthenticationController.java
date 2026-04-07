@@ -1,13 +1,13 @@
-package org.ping_me.controller.authentication;
+package org.ping_me.controller.auth;
 
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.request.authentication.DefaultLoginRequest;
-import org.ping_me.dto.response.authentication.AdminLoginResponse;
-import org.ping_me.service.authentication.AuthenticationService;
+import org.ping_me.dto.request.auth.DefaultLoginRequest;
+import org.ping_me.dto.response.auth.AdminLoginResponse;
+import org.ping_me.service.auth.AuthenticationService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

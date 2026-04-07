@@ -1,11 +1,11 @@
-package org.ping_me.service.authentication;
+package org.ping_me.service.auth;
 
-import org.ping_me.dto.request.authentication.DefaultLoginRequest;
-import org.ping_me.dto.request.authentication.MobileLoginRequest;
-import org.ping_me.dto.request.authentication.RegisterRequest;
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
-import org.ping_me.service.authentication.model.AuthResultWrapper;
+import org.ping_me.dto.request.auth.DefaultLoginRequest;
+import org.ping_me.dto.request.auth.MobileLoginRequest;
+import org.ping_me.dto.request.auth.RegisterRequest;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
+import org.ping_me.service.auth.model.AuthResultWrapper;
 import org.springframework.http.ResponseCookie;
 
 /**

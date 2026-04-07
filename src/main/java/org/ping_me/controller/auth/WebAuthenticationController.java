@@ -1,4 +1,4 @@
-package org.ping_me.controller.authentication;
+package org.ping_me.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,14 +8,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.request.authentication.DefaultLoginRequest;
-import org.ping_me.dto.request.authentication.RegisterRequest;
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
+import org.ping_me.dto.request.auth.DefaultLoginRequest;
+import org.ping_me.dto.request.auth.RegisterRequest;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
-import org.ping_me.dto.response.authentication.CreateNewPasswordResponse;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
-import org.ping_me.dto.response.authentication.auth.DefaultAuthResponse;
-import org.ping_me.service.authentication.AuthenticationService;
+import org.ping_me.dto.response.auth.CreateNewPasswordResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.DefaultAuthResponse;
+import org.ping_me.service.auth.AuthenticationService;
 import org.ping_me.service.user.CurrentUserProfileService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

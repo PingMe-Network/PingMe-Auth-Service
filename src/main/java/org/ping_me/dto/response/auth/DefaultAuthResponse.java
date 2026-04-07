@@ -1,21 +1,18 @@
-package org.ping_me.dto.response.authentication.auth;
+package org.ping_me.dto.response.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 
 /**
- * Admin 1/10/2026
- *
+ * Admin 8/4/2025
  **/
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MobileAuthResponse {
+public class DefaultAuthResponse {
 
     private CurrentUserSessionResponse userSession;
     private String accessToken;
-    private String refreshToken;
 
 }
