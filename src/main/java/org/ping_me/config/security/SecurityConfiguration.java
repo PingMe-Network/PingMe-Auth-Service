@@ -21,6 +21,7 @@ public class SecurityConfiguration {
             "/auth-service/auth/mobile/login",
             "/auth-service/auth/logout",
             "/auth-service/auth/register",
+            "/auth-service/auth/mobile/register",
             "/auth-service/auth/check-email",
             "/auth-service/auth/refresh",
             "/auth-service/auth/admin/login",
