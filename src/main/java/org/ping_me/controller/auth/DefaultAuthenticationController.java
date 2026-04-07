@@ -119,9 +119,8 @@ public class DefaultAuthenticationController {
                 .body(new ApiResponse<>(payload));
     }
 
-    // ================= RESET PASSWORD =================
-    @PostMapping("/reset-password")
-    ApiResponse<CreateNewPasswordResponse> resetPassword(
+    @PostMapping("/forget-password")
+    ApiResponse<CreateNewPasswordResponse> forgetPassword(
             @RequestBody @Valid CreateNewPasswordRequest request
     ) {
         return ApiResponse.<CreateNewPasswordResponse>builder()
