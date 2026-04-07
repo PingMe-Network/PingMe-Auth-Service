@@ -13,7 +13,9 @@ import org.springframework.http.ResponseCookie;
  **/
 public interface AuthenticationService {
     CurrentUserSessionResponse register(
-            RegisterRequest registerRequest);
+            RegisterRequest registerRequest,
+            boolean needTurnstile
+    );
 
     AuthResultWrapper defaultLogin(DefaultLoginRequest defaultLoginRequest);
 

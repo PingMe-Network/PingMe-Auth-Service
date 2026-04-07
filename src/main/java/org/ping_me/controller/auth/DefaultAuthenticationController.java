@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth-service/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class WebAuthenticationController {
+public class DefaultAuthenticationController {
 
     AuthenticationService authenticationService;
     CurrentUserProfileService currentUserProfileService;
@@ -50,7 +50,10 @@ public class WebAuthenticationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(authenticationService.register(registerRequest)));
+                .body(new ApiResponse<>(authenticationService.register(
+                        registerRequest,
+                        true
+                )));
     }
 
     // ================= LOGIN =================

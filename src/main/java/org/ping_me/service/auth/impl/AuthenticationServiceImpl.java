@@ -82,8 +82,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public CurrentUserSessionResponse register(
-            RegisterRequest registerRequest) {
-        validateTurnstile(registerRequest.getTurnstileToken());
+            RegisterRequest registerRequest,
+            boolean needTurnstile
+    ) {
+        if (needTurnstile) validateTurnstile(registerRequest.getTurnstileToken());
 
         var user = User
                 .builder()

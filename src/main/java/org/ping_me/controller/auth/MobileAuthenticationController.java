@@ -47,9 +47,13 @@ public class MobileAuthenticationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(authenticationService.register(registerRequest)));
+                .body(new ApiResponse<>(authenticationService.register(
+                        registerRequest,
+                        false
+                )));
     }
 
+    // ================= LOGIN =================
     @Operation(
             summary = "Đăng nhập qua thiết bị di động",
             description = "Đăng nhập và khởi tạo phiên làm việc mới qua thiết bị di động"
