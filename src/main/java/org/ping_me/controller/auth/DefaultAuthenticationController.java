@@ -134,7 +134,7 @@ public class DefaultAuthenticationController {
                 .body(new ApiResponse<>(authenticationService.checkEmail(email)));
     }
 
-    @PostMapping("/forget-password")
+    @PostMapping("/reset-password")
     ApiResponse<CreateNewPasswordResponse> forgetPassword(
             @RequestBody @Valid CreateNewPasswordRequest request
     ) {

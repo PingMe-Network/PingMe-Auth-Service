@@ -23,8 +23,10 @@ public class SkipPathBearerTokenResolver implements BearerTokenResolver {
             "/auth-service/auth/admin/login",
             "/auth-service/auth/logout",
             "/auth-service/auth/register",
+            "/auth-service/auth/check-email",
             "/auth-service/auth/refresh",
             "/auth-service/auth/mobile/refresh",
+            "/auth-service/auth/reset-password",
             "/auth-service/auth/forget-password",
             "/auth-service/otp/send",
             "/auth-service/otp/verify"
