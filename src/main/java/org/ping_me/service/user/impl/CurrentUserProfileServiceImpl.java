@@ -111,7 +111,7 @@ public class CurrentUserProfileServiceImpl implements CurrentUserProfileService 
         String url = s3Service.uploadFile(
                 avatarFile,
                 "avatar",
-                user.getEmail(),
+                user.getEmail()+LocalDateTime.now().toString(),
                 true,
                 MAX_AVATAR_FILE_SIZE
         );
