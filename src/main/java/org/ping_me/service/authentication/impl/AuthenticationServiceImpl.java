@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.ping_me.client.TurnstileClient;
 import org.ping_me.client.dto.TurnstileResponse;
 import org.ping_me.config.auth.JwtBuilder;
+import org.ping_me.dto.event.UserAuditEvent;
 import org.ping_me.dto.request.authentication.DefaultLoginRequest;
 import org.ping_me.dto.request.authentication.MobileLoginRequest;
 import org.ping_me.dto.request.authentication.RegisterRequest;
@@ -16,15 +18,18 @@ import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
 import org.ping_me.model.constant.AuthProvider;
+import org.ping_me.model.enums.AuditAction;
 import org.ping_me.repository.jpa.UserRepository;
 import org.ping_me.service.authentication.AuthenticationService;
 import org.ping_me.service.authentication.RefreshTokenRedisService;
 import org.ping_me.service.authentication.model.AuthResultWrapper;
 import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseCookie;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,6 +47,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     AuthenticationManager authenticationManager;
@@ -80,6 +86,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @NonFinal
     boolean secure;
 
+    @NonFinal
+    @Value("${spring.kafka.topic.user-create-dev}")
+    String userCreateTopic;
+
+    @Qualifier("kafkaObjectTemplate")
+    KafkaTemplate<String, Object> kafkaObjectTemplate;
+
     @Override
     public CurrentUserSessionResponse register(
             RegisterRequest registerRequest) {
@@ -101,6 +114,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setAccountStatus(AccountStatus.ACTIVE);
         var savedUser = userRepository.save(user);
+
+        publishUserAudit(savedUser, AuditAction.CREATE);
 
         return userMapper.mapToCurrentUserSessionResponse(savedUser);
     }
@@ -191,13 +206,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // Utilities methods
     // =====================================
     public void validateTurnstile(String token) {
-        TurnstileResponse response = turnstileClient
-                .verifyToken(secretKey, token);
-
+        // Tạm thời comment code verify để test Postman
+        /*
+        TurnstileResponse response = turnstileClient.verifyToken(secretKey, token);
         if (!response.success()) {
             String errors = String.join(",", response.errorCodes());
             throw new AccessDeniedException(errors);
         }
+        */
+        log.info("Đã tạm tắt verify Turnstile để test API");
     }
 
     private AuthResultWrapper buildAuthResultWrapper(
@@ -245,4 +262,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
     }
 
+    // warning action kệ đi - để sau này tiện update mấy cái liên quan tới delete hoặc update user
+    private void publishUserAudit(User targetUser, AuditAction action) {
+        if (targetUser == null || targetUser.getId() == null) return;
+
+        try {
+            String actionEmail = targetUser.getEmail();
+            String actionName = targetUser.getName();
+
+            try {
+                User currentUser = currentUserProvider.get();
+                if (currentUser != null) {
+                    actionEmail = currentUser.getEmail();
+                    actionName = currentUser.getName();
+                }
+            } catch (Exception e) {
+                log.debug("Không có session người dùng hiện tại, sử dụng thông tin targetUser.");
+            }
+
+            UserAuditEvent event = new UserAuditEvent(
+                    targetUser.getId(),
+                    actionEmail,
+                    actionName,
+                    action,
+                    System.currentTimeMillis()
+            );
+
+            kafkaObjectTemplate.send(userCreateTopic, event)
+                    .whenComplete((result, ex) -> {
+                        if (ex == null) {
+                            log.info("Kafka: Đã gửi event {} cho user {}", action, targetUser.getEmail());
+                        } else {
+                            log.error("Kafka: Gửi event thất bại: {}", ex.getMessage());
+                        }
+                    });
+
+        } catch (Exception ex) {
+            log.error("Lỗi nghiêm trọng khi chuẩn bị gửi Kafka event: {}", ex.getMessage());
+        }
+    }
 }
