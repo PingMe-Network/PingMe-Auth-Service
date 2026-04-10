@@ -1,7 +1,7 @@
-package org.ping_me.service.authentication;
+package org.ping_me.service.auth;
 
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
-import org.ping_me.dto.response.authentication.CurrentUserDeviceMetaResponse;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CurrentUserDeviceMetaResponse;
 
 import java.time.Duration;
 import java.util.List;

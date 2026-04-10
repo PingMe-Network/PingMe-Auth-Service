@@ -1,7 +1,7 @@
 package org.ping_me.utils.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.dto.response.user.DefaultUserResponse;
 import org.ping_me.model.User;
 import org.springframework.stereotype.Component;

@@ -3,10 +3,10 @@ package org.ping_me.service.user;
 import org.ping_me.dto.request.user.ChangePasswordRequest;
 import org.ping_me.dto.request.user.ChangeProfileRequest;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
-import org.ping_me.dto.response.authentication.ActiveAccountResponse;
-import org.ping_me.dto.response.authentication.CreateNewPasswordResponse;
-import org.ping_me.dto.response.authentication.CurrentUserProfileResponse;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.ActiveAccountResponse;
+import org.ping_me.dto.response.auth.CreateNewPasswordResponse;
+import org.ping_me.dto.response.auth.CurrentUserProfileResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.model.constant.UserStatus;
 import org.springframework.web.multipart.MultipartFile;
 

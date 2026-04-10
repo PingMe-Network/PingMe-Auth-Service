@@ -1,12 +1,12 @@
-package org.ping_me.service.authentication.impl;
+package org.ping_me.service.auth.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
-import org.ping_me.dto.response.authentication.CurrentUserDeviceMetaResponse;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CurrentUserDeviceMetaResponse;
 import org.ping_me.model.common.DeviceMeta;
-import org.ping_me.service.authentication.RefreshTokenRedisService;
+import org.ping_me.service.auth.RefreshTokenRedisService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
-package org.ping_me.service.authentication.model;
+package org.ping_me.service.auth.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.springframework.http.ResponseCookie;
 
 /**

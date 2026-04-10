@@ -1,6 +1,6 @@
 package org.ping_me.service.user;
 
-import org.ping_me.dto.response.authentication.CurrentUserDeviceMetaResponse;
+import org.ping_me.dto.response.auth.CurrentUserDeviceMetaResponse;
 
 import java.util.List;
 

@@ -16,23 +16,24 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfiguration {
     private static final String[] WHITELIST = {
+
             // Authentication
             "/auth-service/auth/login",
             "/auth-service/auth/mobile/login",
             "/auth-service/auth/logout",
             "/auth-service/auth/register",
+            "/auth-service/auth/mobile/register",
+            "/auth-service/auth/check-email",
             "/auth-service/auth/refresh",
             "/auth-service/auth/admin/login",
             "/auth-service/auth/mobile/refresh",
-
-            // Forget password
-            "/auth-service/auth/forget-password",
-            "/mail-management/api/v1/mails/send-otp",
-            "/mail-management/api/v1/mails/otp-verification",
-
-            // OTP
+            "/auth-service/auth/reset-password",
             "/auth-service/otp/send",
             "/auth-service/otp/verify",
+
+            // Forget password
+            "/mail-management/api/v1/mails/send-otp",
+            "/mail-management/api/v1/mails/otp-verification",
 
             // API DOCS
             "/swagger-ui/**",

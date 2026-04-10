@@ -1,4 +1,4 @@
-package org.ping_me.controller.authentication;
+package org.ping_me.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,14 +8,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.request.authentication.DefaultLoginRequest;
-import org.ping_me.dto.request.authentication.RegisterRequest;
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
+import org.ping_me.dto.request.auth.DefaultLoginRequest;
+import org.ping_me.dto.request.auth.RegisterRequest;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CheckEmailResponse;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
-import org.ping_me.dto.response.authentication.CreateNewPasswordResponse;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
-import org.ping_me.dto.response.authentication.auth.DefaultAuthResponse;
-import org.ping_me.service.authentication.AuthenticationService;
+import org.ping_me.dto.response.auth.CreateNewPasswordResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.DefaultAuthResponse;
+import org.ping_me.service.auth.AuthenticationService;
 import org.ping_me.service.user.CurrentUserProfileService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,10 @@ public class DefaultAuthenticationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(authenticationService.register(registerRequest)));
+                .body(new ApiResponse<>(authenticationService.register(
+                        registerRequest,
+                        true
+                )));
     }
 
     // ================= LOGIN =================
@@ -116,7 +120,21 @@ public class DefaultAuthenticationController {
                 .body(new ApiResponse<>(payload));
     }
 
-    @PostMapping("/forget-password")
+    @Operation(
+            summary = "Kiểm tra email",
+            description = "Kiểm tra email đã tồn tại trong hệ thống hay chưa"
+    )
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<CheckEmailResponse>> checkEmail(
+            @Parameter(description = "Email cần kiểm tra", required = true)
+            @RequestParam String email
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>(authenticationService.checkEmail(email)));
+    }
+
+    @PostMapping("/reset-password")
     ApiResponse<CreateNewPasswordResponse> forgetPassword(
             @RequestBody @Valid CreateNewPasswordRequest request
     ) {

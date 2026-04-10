@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.ping_me.dto.base.ApiResponse;
-import org.ping_me.dto.response.authentication.CurrentUserDeviceMetaResponse;
+import org.ping_me.dto.response.auth.CurrentUserDeviceMetaResponse;
 import org.ping_me.service.user.CurrentUserSessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

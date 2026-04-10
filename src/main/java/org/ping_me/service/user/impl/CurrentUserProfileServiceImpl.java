@@ -8,10 +8,10 @@ import org.ping_me.config.s3.S3Service;
 import org.ping_me.dto.request.user.ChangePasswordRequest;
 import org.ping_me.dto.request.user.ChangeProfileRequest;
 import org.ping_me.dto.request.user.CreateNewPasswordRequest;
-import org.ping_me.dto.response.authentication.ActiveAccountResponse;
-import org.ping_me.dto.response.authentication.CreateNewPasswordResponse;
-import org.ping_me.dto.response.authentication.CurrentUserProfileResponse;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
+import org.ping_me.dto.response.auth.ActiveAccountResponse;
+import org.ping_me.dto.response.auth.CreateNewPasswordResponse;
+import org.ping_me.dto.response.auth.CurrentUserProfileResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
 import org.ping_me.model.constant.UserStatus;
@@ -111,7 +111,7 @@ public class CurrentUserProfileServiceImpl implements CurrentUserProfileService 
         String url = s3Service.uploadFile(
                 avatarFile,
                 "avatar",
-                user.getEmail(),
+                user.getEmail()+LocalDateTime.now().toString(),
                 true,
                 MAX_AVATAR_FILE_SIZE
         );

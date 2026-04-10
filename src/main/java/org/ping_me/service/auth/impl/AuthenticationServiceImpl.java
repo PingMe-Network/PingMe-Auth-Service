@@ -1,4 +1,4 @@
-package org.ping_me.service.authentication.impl;
+package org.ping_me.service.auth.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
@@ -9,20 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.ping_me.client.TurnstileClient;
 import org.ping_me.client.dto.TurnstileResponse;
 import org.ping_me.config.auth.JwtBuilder;
+import org.ping_me.dto.request.auth.DefaultLoginRequest;
+import org.ping_me.dto.request.auth.MobileLoginRequest;
+import org.ping_me.dto.request.auth.RegisterRequest;
+import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.response.auth.CheckEmailResponse;
+import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.dto.event.UserAuditEvent;
-import org.ping_me.dto.request.authentication.DefaultLoginRequest;
-import org.ping_me.dto.request.authentication.MobileLoginRequest;
-import org.ping_me.dto.request.authentication.RegisterRequest;
-import org.ping_me.dto.request.authentication.SubmitSessionMetaRequest;
-import org.ping_me.dto.response.authentication.CurrentUserSessionResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
 import org.ping_me.model.constant.AuthProvider;
 import org.ping_me.model.enums.AuditAction;
 import org.ping_me.repository.jpa.UserRepository;
-import org.ping_me.service.authentication.AuthenticationService;
-import org.ping_me.service.authentication.RefreshTokenRedisService;
-import org.ping_me.service.authentication.model.AuthResultWrapper;
+import org.ping_me.service.auth.AuthenticationService;
+import org.ping_me.service.auth.RefreshTokenRedisService;
+import org.ping_me.service.auth.model.AuthResultWrapper;
 import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,8 +96,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public CurrentUserSessionResponse register(
-            RegisterRequest registerRequest) {
-        validateTurnstile(registerRequest.getTurnstileToken());
+            RegisterRequest registerRequest,
+            boolean needTurnstile
+    ) {
+        if (needTurnstile) validateTurnstile(registerRequest.getTurnstileToken());
 
         var user = User
                 .builder()
@@ -202,19 +205,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return buildAuthResultWrapper(user, defaultLoginRequest.getSubmitSessionMetaRequest(), 600L);
     }
 
+    @Override
+    public CheckEmailResponse checkEmail(String email) {
+        return new CheckEmailResponse(userRepository.existsByEmail(email));
+    }
+
     // =====================================
     // Utilities methods
     // =====================================
     public void validateTurnstile(String token) {
-        // Tạm thời comment code verify để test Postman
-        /*
-        TurnstileResponse response = turnstileClient.verifyToken(secretKey, token);
+        TurnstileResponse response = turnstileClient
+                .verifyToken(secretKey, token);
+
         if (!response.success()) {
             String errors = String.join(",", response.errorCodes());
             throw new AccessDeniedException(errors);
         }
-        */
-        log.info("Đã tạm tắt verify Turnstile để test API");
     }
 
     private AuthResultWrapper buildAuthResultWrapper(

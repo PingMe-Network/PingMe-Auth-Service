@@ -1,4 +1,4 @@
-package org.ping_me.controller.authentication;
+package org.ping_me.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
