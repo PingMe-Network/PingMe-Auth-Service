@@ -99,13 +99,22 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse<>(e.getMessage(), ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @ExceptionHandler(value = DisabledException.class)
-    public ResponseEntity<ApiResponse<Void>> handlingDisabledException(DisabledException exception){
-        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
-        ApiResponse<Void> apiResponse = new ApiResponse<>();
-        apiResponse.setErrorCode(errorCode.getCode());
-        apiResponse.setErrorMessage(errorCode.getMessage());
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDisabledException(DisabledException ex) {
+        // Nếu tin nhắn là cờ hiệu của mình thì báo lỗi kích hoạt
+        if ("REQUIRE_ACTIVATION".equals(ex.getMessage())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.<Void>builder()
+                            .errorCode(403)
+                            .errorMessage("REQUIRE_ACTIVATION")
+                            .build());
+        }else{
+            ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+            ApiResponse<Void> apiResponse = new ApiResponse<>();
+            apiResponse.setErrorCode(errorCode.getCode());
+            apiResponse.setErrorMessage(errorCode.getMessage());
+            return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        }
     }
 
     @ExceptionHandler(value = RuntimeException.class)

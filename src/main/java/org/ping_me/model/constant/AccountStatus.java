@@ -9,5 +9,6 @@ public enum AccountStatus {
     NON_ACTIVATED,
     ACTIVE,
     SUSPENDED,
-    DEACTIVATED
+    DEACTIVATED,
+    PENDING_VERIFICATION,
 }
