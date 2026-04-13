@@ -15,6 +15,7 @@ import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
 import org.ping_me.model.constant.AuthOtpType;
 import org.ping_me.repository.jpa.UserRepository;
+import org.ping_me.service.auth.AuthenticationService;
 import org.ping_me.service.otp.OtpService;
 import org.ping_me.service.otp.OtpRedisService;
 import org.ping_me.utils.OtpGenerator;
@@ -118,6 +119,13 @@ public class OtpServiceImpl implements OtpService {
                 if (user == null) throw new EntityNotFoundException("User not found: " + email);
 
                 yield Optional.ofNullable(jwtService.buildJwt(user, 600L));
+            }
+            case ACCOUNT_ACTIVATION -> {
+                User user = userRepository.findByEmail(email);
+                if (user == null) throw new EntityNotFoundException("User not found: " + email);
+                user.setAccountStatus(AccountStatus.ACTIVE);
+                userRepository.save(user);
+                yield Optional.of("");
             }
 
             default -> Optional.empty();

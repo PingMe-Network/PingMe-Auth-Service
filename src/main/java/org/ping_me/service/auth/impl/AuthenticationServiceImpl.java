@@ -13,17 +13,21 @@ import org.ping_me.dto.request.auth.DefaultLoginRequest;
 import org.ping_me.dto.request.auth.MobileLoginRequest;
 import org.ping_me.dto.request.auth.RegisterRequest;
 import org.ping_me.dto.request.auth.SubmitSessionMetaRequest;
+import org.ping_me.dto.request.mail.AuthOtpRequest;
 import org.ping_me.dto.response.auth.CheckEmailResponse;
 import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.dto.event.UserAuditEvent;
+import org.ping_me.dto.response.mail.GetOtpResponse;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
+import org.ping_me.model.constant.AuthOtpType;
 import org.ping_me.model.constant.AuthProvider;
 import org.ping_me.model.enums.AuditAction;
 import org.ping_me.repository.jpa.UserRepository;
 import org.ping_me.service.auth.AuthenticationService;
 import org.ping_me.service.auth.RefreshTokenRedisService;
 import org.ping_me.service.auth.model.AuthResultWrapper;
+import org.ping_me.service.otp.OtpService;
 import org.ping_me.service.user.CurrentUserProvider;
 import org.ping_me.utils.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +37,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserMapper userMapper;
 
     UserRepository userRepository;
+
+    OtpService otpService;
 
     CurrentUserProvider currentUserProvider;
 
@@ -115,10 +122,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         user.setAuthProvider(AuthProvider.LOCAL);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setAccountStatus(AccountStatus.PENDING_VERIFICATION);
         var savedUser = userRepository.save(user);
 
         publishUserAudit(savedUser, AuditAction.CREATE);
+
+        otpService.sendOtp(new AuthOtpRequest(user.getEmail(), AuthOtpType.ACCOUNT_ACTIVATION, registerRequest.getTurnstileToken()));
 
         return userMapper.mapToCurrentUserSessionResponse(savedUser);
     }
@@ -131,11 +140,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 defaultLoginRequest.getEmail(),
                 defaultLoginRequest.getPassword()
         );
-
         var authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return buildAuthResultWrapper(currentUserProvider.get(), defaultLoginRequest.getSubmitSessionMetaRequest());
+        User currentUser = currentUserProvider.get();
+        if (currentUser.getAccountStatus() == AccountStatus.PENDING_VERIFICATION) {
+            otpService.sendOtp(new AuthOtpRequest(currentUser.getEmail(), AuthOtpType.ACCOUNT_ACTIVATION, defaultLoginRequest.getTurnstileToken()));
+            throw new DisabledException("REQUIRE_ACTIVATION");
+        }
+
+        return buildAuthResultWrapper(currentUser, defaultLoginRequest.getSubmitSessionMetaRequest());
     }
 
     @Override
