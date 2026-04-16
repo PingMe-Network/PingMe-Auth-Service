@@ -162,6 +162,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        User currentUser = currentUserProvider.get();
+        if (currentUser.getAccountStatus() == AccountStatus.PENDING_VERIFICATION) {
+            otpService.sendOtp(new AuthOtpRequest(currentUser.getEmail(), AuthOtpType.ACCOUNT_ACTIVATION, null));
+            System.out.println("User AccountStatus: "+ currentUser.getAccountStatus());
+            throw new DisabledException("REQUIRE_ACTIVATION");
+        }
+
         return buildAuthResultWrapper(currentUserProvider.get(), mobileLoginRequest.getSubmitSessionMetaRequest());
     }
 
