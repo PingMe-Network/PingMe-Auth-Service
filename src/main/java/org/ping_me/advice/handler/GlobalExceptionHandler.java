@@ -93,11 +93,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException e) {
-        log.warn("Lỗi phân quyền (403): {}", e.getMessage());
+    public ResponseEntity<ApiResponse<Void>> handleAuthorization(AccessDeniedException e) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(new ApiResponse<>("Bạn không có quyền thực hiện hành động này!", HttpStatus.FORBIDDEN.value()));
+                .body(new ApiResponse<>(e.getMessage(), ErrorCode.UNAUTHORIZED.getCode()));
     }
 
     @ExceptionHandler(DisabledException.class)
