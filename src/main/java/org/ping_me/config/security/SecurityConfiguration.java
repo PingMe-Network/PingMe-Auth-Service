@@ -2,6 +2,7 @@ package org.ping_me.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,6 +33,7 @@ public class SecurityConfiguration {
             // Forget password
             "/mail-management/api/v1/mails/send-otp",
             "/mail-management/api/v1/mails/otp-verification",
+            "/mail-management/api/v1/mails/**",
 
             // API DOCS
             "/swagger-ui/**",
@@ -48,12 +50,14 @@ public class SecurityConfiguration {
 
     };
 
-    private static final String[] ADMIN_END_POINT = {
-
+    private static final String[] ADMIN_POST_END_POINT = {
             // Authentication
             "/auth-service/auth/admin/login",
+    };
+
+    private static final String[] ADMIN_GET_END_POINT = {
             // Users
-            "/auth-service/users/**",
+            "/auth-service/users",
     };
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -73,7 +77,8 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(ADMIN_END_POINT).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, ADMIN_GET_END_POINT).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, ADMIN_POST_END_POINT).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
