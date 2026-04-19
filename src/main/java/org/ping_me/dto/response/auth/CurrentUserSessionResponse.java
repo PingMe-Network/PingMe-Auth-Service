@@ -21,5 +21,4 @@ public class CurrentUserSessionResponse {
     private String avatarUrl;
     private String updatedAt;
     private String roleName;
-
 }

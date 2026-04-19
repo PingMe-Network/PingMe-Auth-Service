@@ -41,6 +41,7 @@ public class UserMapper {
                 .dob(user.getDob())
                 .avatarUrl(user.getAvatarUrl())
                 .accountStatus(user.getAccountStatus())
+                .roleName(user.getRole().getName() != null ? user.getRole().getName() : "")
                 .build();
     }
 

@@ -25,4 +25,5 @@ public class DefaultUserResponse {
     LocalDate dob;
     String avatarUrl;
     AccountStatus accountStatus;
+    String roleName;
 }

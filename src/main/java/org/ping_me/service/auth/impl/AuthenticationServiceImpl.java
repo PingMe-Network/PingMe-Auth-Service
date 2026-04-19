@@ -18,11 +18,13 @@ import org.ping_me.dto.response.auth.CheckEmailResponse;
 import org.ping_me.dto.response.auth.CurrentUserSessionResponse;
 import org.ping_me.dto.event.UserAuditEvent;
 import org.ping_me.dto.response.mail.GetOtpResponse;
+import org.ping_me.model.Role;
 import org.ping_me.model.User;
 import org.ping_me.model.constant.AccountStatus;
 import org.ping_me.model.constant.AuthOtpType;
 import org.ping_me.model.constant.AuthProvider;
 import org.ping_me.model.enums.AuditAction;
+import org.ping_me.repository.jpa.RoleRepository;
 import org.ping_me.repository.jpa.UserRepository;
 import org.ping_me.service.auth.AuthenticationService;
 import org.ping_me.service.auth.RefreshTokenRedisService;
@@ -66,6 +68,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     UserRepository userRepository;
 
+    RoleRepository roleRepository;
+
     OtpService otpService;
 
     CurrentUserProvider currentUserProvider;
@@ -108,6 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     ) {
         if (needTurnstile) validateTurnstile(registerRequest.getTurnstileToken());
 
+        Role role = roleRepository.findById(2L).orElse(null);
         var user = User
                 .builder()
                 .email(registerRequest.getEmail())
@@ -115,6 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .gender(registerRequest.getGender())
                 .address(registerRequest.getAddress())
                 .dob(registerRequest.getDob())
+                .role(role)
                 .build();
 
         if (userRepository.existsByEmail(registerRequest.getEmail()))
